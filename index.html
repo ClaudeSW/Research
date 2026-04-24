@@ -153,7 +153,7 @@
   .media-card .thumb .badge {
     position: absolute; top: 0.8rem; left: 0.8rem; font-family: 'Oxanium', cursive;
     font-size: 0.6rem; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase;
-    padding: 0.3rem 0.65rem; border-radius: 4px;
+    padding: 0.3rem 0.65rem; border-radius: 4px; z-index: 3; pointer-events: none;
   }
   .badge.vid { background: var(--accent); color: #fff; }
   .badge.img { background: var(--blue); color: #fff; }
@@ -342,7 +342,7 @@
       <div class="logo-text">GIVING CLAUDE HANDS <span>/ 2026</span></div>
     </div>
     <ul>
-      
+      <li><a href="#overview">Overview</a></li>
       <li><a href="#media">Media</a></li>
       <li><a href="#report">Report</a></li>
       <li><a href="#about">About</a></li>
@@ -371,13 +371,35 @@
       <div class="data-row"><span class="label">Institution</span><span class="val">Syracuse University</span></div>
       <div class="data-row"><span class="label">Target</span><span class="val">SolidWorks 2024 SP5</span></div>
       <div class="data-row"><span class="label">Best Method</span><span class="val highlight">Local MCP Server</span></div>
-      <div class="data-row"><span class="label">Tools Confirmed</span><span class="val highlight">22</span></div>
+      <div class="data-row"><span class="label">Tools Confirmed</span><span class="val highlight">22 / 26</span></div>
       <div class="data-row"><span class="label">VBA Macro</span><span class="val"><span class="status-dot red"></span>3/8</span></div>
       <div class="data-row"><span class="label">Python + COM</span><span class="val"><span class="status-dot amber"></span>5/8</span></div>
       <div class="data-row"><span class="label">MCP Server</span><span class="val"><span class="status-dot green"></span>6/8</span></div>
     </div>
   </div>
 </header>
+
+<hr class="full-divider">
+
+<!-- OVERVIEW -->
+<section id="overview">
+  <div class="sec-header">
+    <div>
+      <div class="sec-label">01 — Overview</div>
+      <div class="sec-title">Project Summary</div>
+    </div>
+    <div class="sec-aside">Three integration methods were evaluated for AI-driven CAD. The MCP Server's iterative feedback loop proved decisive.</div>
+  </div>
+  <div class="data-panel">
+    <div class="data-panel-header">Build Results — Trained System</div>
+    <div class="data-row"><span class="label">Bowl (Shell + Chamfer Test)</span><span class="val"><span class="status-dot green"></span>2 features</span></div>
+    <div class="data-row"><span class="label">Frame Cube Sculpture</span><span class="val"><span class="status-dot green"></span>5 features, 3.87 kg</span></div>
+    <div class="data-row"><span class="label">Geometric Chalice</span><span class="val"><span class="status-dot green"></span>9 features, 3.56 kg</span></div>
+    <div class="data-row"><span class="label">Cessna 172 Scale Model</span><span class="val"><span class="status-dot green"></span>27 features, 0.467 kg</span></div>
+    <div class="data-row"><span class="label">NACA 2412 — Polygon</span><span class="val"><span class="status-dot amber"></span>faceted profile</span></div>
+    <div class="data-row"><span class="label">NACA 2412 — Spline</span><span class="val"><span class="status-dot green"></span>smooth profile</span></div>
+  </div>
+</section>
 
 <hr class="full-divider">
 
@@ -393,36 +415,53 @@
 
   <div class="media-grid">
     <div class="media-card">
-      <div class="thumb">
+      <div class="thumb" style="position:relative;">
         <span class="badge vid">Video</span>
-        <div class="img-placeholder">VIDEO 1<br>Replace with your video</div>
-        <div class="play-ring"><svg viewBox="0 0 24 24"><polygon points="8,5 19,12 8,19"/></svg></div>
+        <iframe width="100%" height="100%" src="https://www.youtube.com/embed/ZkmlGD9rmuQ" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen style="position:absolute;inset:0;"></iframe>
       </div>
       <div class="body">
-        <h3>MCP Server — L-Bracket</h3>
-        <p>The base test part generated through iterative tool calls.</p>
+        <h3>MCP Server — L-Bracket (Fail)</h3>
+        <p>Early MCP server attempt at generating the L-bracket test part.</p>
       </div>
     </div>
     <div class="media-card">
-      <div class="thumb">
+      <div class="thumb" style="position:relative;">
         <span class="badge vid">Video</span>
-        <div class="img-placeholder">VIDEO 2<br>Replace with your video</div>
-        <div class="play-ring"><svg viewBox="0 0 24 24"><polygon points="8,5 19,12 8,19"/></svg></div>
+        <iframe width="100%" height="100%" src="https://www.youtube.com/embed/Iyd8WC0Q-As" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen style="position:absolute;inset:0;"></iframe>
       </div>
       <div class="body">
-        <h3>Cessna 172 — 27 Features</h3>
-        <p>Scale model aircraft from a single natural-language prompt.</p>
+        <h3>VBA Macro — L-Bracket Testing</h3>
+        <p>VBA macro method generating the L-bracket in SolidWorks.</p>
       </div>
     </div>
     <div class="media-card">
-      <div class="thumb">
+      <div class="thumb" style="position:relative;">
         <span class="badge vid">Video</span>
-        <div class="img-placeholder">VIDEO 3<br>Replace with your video</div>
-        <div class="play-ring"><svg viewBox="0 0 24 24"><polygon points="8,5 19,12 8,19"/></svg></div>
+        <iframe width="100%" height="100%" src="https://www.youtube.com/embed/ymuDpvJstiE" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen style="position:absolute;inset:0;"></iframe>
       </div>
       <div class="body">
-        <h3>NACA 2412 — Spline Airfoil</h3>
-        <p>Smooth B-spline curve with 60 fit-points, extruded 150 mm.</p>
+        <h3>Python + COM — L-Bracket Testing</h3>
+        <p>Python + COM method attempting the L-bracket build.</p>
+      </div>
+    </div>
+    <div class="media-card">
+      <div class="thumb" style="position:relative;">
+        <span class="badge vid">Video</span>
+        <iframe width="100%" height="100%" src="https://www.youtube.com/embed/mC2zjxYLKHs" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen style="position:absolute;inset:0;"></iframe>
+      </div>
+      <div class="body">
+        <h3>NACA 2412 Airfoil — 160 Points</h3>
+        <p>Polygon method airfoil with 160 points, before the spline tool was added.</p>
+      </div>
+    </div>
+    <div class="media-card">
+      <div class="thumb" style="position:relative;">
+        <span class="badge vid">Video</span>
+        <iframe width="100%" height="100%" src="https://www.youtube.com/embed/kSFilA56Cr0" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen style="position:absolute;inset:0;"></iframe>
+      </div>
+      <div class="body">
+        <h3>Fillet Testing — MCP Server</h3>
+        <p>Testing and validating the fillet tool on live SolidWorks geometry.</p>
       </div>
     </div>
   </div>
@@ -436,11 +475,11 @@
     -->
 
     <!-- VBA Macro — 3 image carousel -->
-    <div class="carousel-cell" data-images='["Macro Drawing.PNG", "MACRO_SS.png", "MACRO_PRINT.png"]' data-captions='["VBA Drawing", "VBA Screenshot", "VBA 3D Print"]'>
+    <div class="carousel-cell" data-images='["Macro Drawing.PNG", "MACRO_SS.PNG", "MACRO_PRINT.PNG"]' data-captions='["VBA Drawing", "VBA Screenshot", "VBA 3D Print"]'>
       <div class="carousel-wrap">
         <img src="Macro Drawing.PNG" alt="VBA Drawing" class="active">
-        <img src="MACRO_SS.png" alt="VBA Screenshot">
-        <img src="MACRO_PRINT.png" alt="VBA 3D Print">
+        <img src="MACRO_SS.PNG" alt="VBA Screenshot">
+        <img src="MACRO_PRINT.PNG" alt="VBA 3D Print">
         <div class="carousel-nav prev" onclick="event.stopPropagation(); carouselNav(this, -1)">‹</div>
         <div class="carousel-nav next" onclick="event.stopPropagation(); carouselNav(this, 1)">›</div>
         <div class="carousel-dots">
@@ -453,11 +492,11 @@
     </div>
 
     <!-- Python + COM — 3 image carousel -->
-    <div class="carousel-cell" data-images='["PythonCOMdrwaing.PNG", "PYTHON_SS.png", "PYTHON_PRINT.png"]' data-captions='["Python Drawing", "Python Screenshot", "Python 3D Print"]'>
+    <div class="carousel-cell" data-images='["PythonCOMdrwaing.PNG", "PYTHON_SS.PNG", "PYTHON_PRINT.PNG"]' data-captions='["Python Drawing", "Python Screenshot", "Python 3D Print"]'>
       <div class="carousel-wrap">
         <img src="PythonCOMdrwaing.PNG" alt="Python Drawing" class="active">
-        <img src="PYTHON_SS.png" alt="Python Screenshot">
-        <img src="PYTHON_PRINT.png" alt="Python 3D Print">
+        <img src="PYTHON_SS.PNG" alt="Python Screenshot">
+        <img src="PYTHON_PRINT.PNG" alt="Python 3D Print">
         <div class="carousel-nav prev" onclick="event.stopPropagation(); carouselNav(this, -1)">‹</div>
         <div class="carousel-nav next" onclick="event.stopPropagation(); carouselNav(this, 1)">›</div>
         <div class="carousel-dots">
@@ -470,11 +509,11 @@
     </div>
 
     <!-- MCP Server — 3 image carousel -->
-    <div class="carousel-cell" data-images='["LbracketMCP.PNG", "MCP_SS.png", "MCP_PRINT.png"]' data-captions='["MCP Drawing", "MCP Screenshot", "MCP 3D Print"]'>
+    <div class="carousel-cell" data-images='["LBracketMCP.PNG", "MCP_SS.PNG", "MCP_PRINT.PNG"]' data-captions='["MCP Drawing", "MCP Screenshot", "MCP 3D Print"]'>
       <div class="carousel-wrap">
-        <img src="LbracketMCP.PNG" alt="MCP Drawing" class="active">
-        <img src="MCP_SS.png" alt="MCP Screenshot">
-        <img src="MCP_PRINT.png" alt="MCP 3D Print">
+        <img src="LBracketMCP.PNG" alt="MCP Drawing" class="active">
+        <img src="MCP_SS.PNG" alt="MCP Screenshot">
+        <img src="MCP_PRINT.PNG" alt="MCP 3D Print">
         <div class="carousel-nav prev" onclick="event.stopPropagation(); carouselNav(this, -1)">‹</div>
         <div class="carousel-nav next" onclick="event.stopPropagation(); carouselNav(this, 1)">›</div>
         <div class="carousel-dots">
@@ -491,20 +530,20 @@
       Click to open in lightbox. Replace placeholders with real images.
       ==============================================================
     -->
-<div class="img-cell" onclick="openLightbox(['FrameCube.png'], ['Frame Cube'], 0)">
-  <div class="preview"><img src="FrameCube.png" alt="Frame Cube"></div>
-  <div class="label"><span class="name">Frame Cube</span><span class="type">.PNG</span></div>
-</div>
+    <div class="img-cell" onclick="openLightbox(['IMAGE4.PNG'], ['Frame Cube'], 0)">
+      <div class="preview"><div class="img-placeholder">IMAGE 4</div></div>
+      <div class="label"><span class="name">Frame Cube</span><span class="type">.PNG</span></div>
+    </div>
     <div class="img-cell" onclick="openLightbox(['IMAGE5.PNG'], ['Chalice'], 0)">
       <div class="preview"><div class="img-placeholder">IMAGE 5</div></div>
       <div class="label"><span class="name">Chalice</span><span class="type">.PNG</span></div>
     </div>
-    <div class="img-cell" onclick="openLightbox(['Cessna 172 attempt 2.PNG'], ['Cessna 172'], 0)">
-      <div class="preview"><img src="Cessna 172 attempt 2.PNG" alt="Cessna 172"></div>
+    <div class="img-cell" onclick="openLightbox(['IMAGE6.PNG'], ['Cessna 172'], 0)">
+      <div class="preview"><div class="img-placeholder">IMAGE 6</div></div>
       <div class="label"><span class="name">Cessna 172</span><span class="type">.PNG</span></div>
     </div>
-    <div class="img-cell" onclick="openLightbox(['NACA_2412_Airfoil_Attempt1.PNG'], ['NACA Polygon'], 0)">
-      <div class="preview"><img src="NACA_2412_Airfoil_Attempt1.PNG" alt="NACA Polygon"></div>
+    <div class="img-cell" onclick="openLightbox(['IMAGE7.PNG'], ['NACA Polygon'], 0)">
+      <div class="preview"><div class="img-placeholder">IMAGE 7</div></div>
       <div class="label"><span class="name">NACA Polygon</span><span class="type">.PNG</span></div>
     </div>
     <div class="img-cell" onclick="openLightbox(['IMAGE8.PNG'], ['NACA Spline'], 0)">
@@ -530,7 +569,7 @@
       <div>
         <h3>Giving Claude Hands</h3>
         <p>Complete methodology, results, engineering drawings, and code appendices.</p>
-        <div class="meta">PDF · ~59 pages · Lucas J. Fawcett · Syracuse University · April 2026</div>
+        <div class="meta">PDF · ~60 pages · Lucas J. Fawcett · Syracuse University · April 2026</div>
       </div>
       <a href="Giving_Claude_Hands_Report.pdf" class="btn-primary" download>
         <svg viewBox="0 0 24 24"><path d="M12 16l-5-5h3V4h4v7h3l-5 5zm-7 4h14v-2H5v2z"/></svg>
@@ -559,10 +598,11 @@
       <h3>Lucas J. Fawcett</h3>
       <div class="sub">Syracuse University</div>
       <p>I'm a student at Syracuse University researching the intersection of AI and engineering workflows. "Giving Claude Hands" investigates whether an AI language model can operate professional CAD software autonomously when given appropriate tooling and iterative feedback.</p>
-      <p>My interests include CAD/CAM automation, AI-assisted design, and aerospace engineering. This project demonstrates that with the right architecture, an AI can build real 3D geometry from natural language alone.</p>
+      <p>My interests include CAD/CAM automation, AI-assisted design, additive manufacturing, and aerospace engineering. This project demonstrates that with the right architecture, an AI can build real 3D geometry from natural language alone.</p>
       <div class="links">
-        <a href="https://www.linkedin.com/in/lucas-fawcett-6174752b7/?lipi=urn%3Ali%3Apage%3Ad_flagship3_profile_view_base_contact_details%3B9O7x35b%2FRBe%2FwIvr0vKtwQ%3D%3D">LinkedIn</a>
-        <a href="mailto:lfawcett0615@gmail.com">Email</a>
+        <a href="#">LinkedIn</a>
+        <a href="#">GitHub</a>
+        <a href="mailto:your-email@syr.edu">Email</a>
       </div>
     </div>
   </div>

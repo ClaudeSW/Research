@@ -1,0 +1,778 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Giving Claude Hands — Lucas J. Fawcett</title>
+<link href="https://fonts.googleapis.com/css2?family=Oxanium:wght@300;400;500;600;700;800&family=Share+Tech+Mono&family=Nunito+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0c0f14;
+    --surface: #12161e;
+    --surface-2: #181d28;
+    --border: #252d3d;
+    --accent: #ff6b2b;
+    --accent-dim: #ff6b2b15;
+    --accent-glow: #ff6b2b30;
+    --blue: #3b82f6;
+    --blue-dim: #3b82f615;
+    --teal: #14b8a6;
+    --text: #d4d8e0;
+    --text-dim: #6b7a90;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'Nunito Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.7;
+    overflow-x: hidden;
+  }
+
+  /* Subtle noise texture */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.025'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* NAV — Mission bar */
+  nav {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    z-index: 100;
+    background: rgba(12, 15, 20, 0.9);
+    backdrop-filter: blur(16px);
+    border-bottom: 1px solid var(--border);
+  }
+  .nav-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 56px;
+  }
+  .logo-area {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+  .logo-mark {
+    width: 28px;
+    height: 28px;
+    border: 2px solid var(--accent);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+  }
+  .logo-mark::after {
+    content: '';
+    width: 8px;
+    height: 8px;
+    background: var(--accent);
+    border-radius: 50%;
+  }
+  .logo-text {
+    font-family: 'Oxanium', cursive;
+    font-weight: 700;
+    font-size: 0.85rem;
+    letter-spacing: 0.08em;
+    color: var(--text);
+  }
+  .logo-text span { color: var(--text-dim); font-weight: 400; }
+  nav ul { list-style: none; display: flex; gap: 0.5rem; }
+  nav a {
+    color: var(--text-dim);
+    text-decoration: none;
+    font-family: 'Oxanium', cursive;
+    font-size: 0.75rem;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    padding: 0.4rem 0.9rem;
+    border-radius: 4px;
+    transition: all 0.3s;
+    text-transform: uppercase;
+  }
+  nav a:hover {
+    color: var(--accent);
+    background: var(--accent-dim);
+  }
+
+  /* HERO — Mission briefing style */
+  .hero {
+    position: relative;
+    z-index: 1;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    padding: 6rem 2rem 4rem;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+  .hero-left { flex: 1; max-width: 650px; }
+  .hero-right {
+    flex: 0 0 340px;
+    margin-left: 4rem;
+  }
+  .mission-tag {
+    font-family: 'Oxanium', cursive;
+    font-size: 0.65rem;
+    font-weight: 600;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--accent);
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 1.5rem;
+  }
+  .mission-tag::before {
+    content: '';
+    width: 32px;
+    height: 2px;
+    background: var(--accent);
+  }
+  .hero h1 {
+    font-family: 'Oxanium', cursive;
+    font-size: clamp(2.8rem, 5.5vw, 4.5rem);
+    font-weight: 800;
+    line-height: 1.05;
+    color: #fff;
+    margin-bottom: 1.5rem;
+  }
+  .hero h1 .thin { font-weight: 300; color: var(--text-dim); }
+  .hero p {
+    color: var(--text-dim);
+    font-size: 1rem;
+    max-width: 500px;
+    margin-bottom: 2.5rem;
+  }
+  .hero-actions {
+    display: flex;
+    gap: 1rem;
+  }
+  .btn-primary {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: var(--accent);
+    color: #fff;
+    font-family: 'Oxanium', cursive;
+    font-size: 0.8rem;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    padding: 0.85rem 1.75rem;
+    border-radius: 6px;
+    text-decoration: none;
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+  .btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 30px var(--accent-glow);
+  }
+  .btn-primary svg { width: 16px; height: 16px; fill: #fff; }
+  .btn-outline {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: transparent;
+    color: var(--text-dim);
+    font-family: 'Oxanium', cursive;
+    font-size: 0.8rem;
+    font-weight: 500;
+    letter-spacing: 0.05em;
+    padding: 0.85rem 1.75rem;
+    border-radius: 6px;
+    border: 1px solid var(--border);
+    text-decoration: none;
+    transition: all 0.3s;
+  }
+  .btn-outline:hover { border-color: var(--accent); color: var(--accent); }
+
+  /* Side data panel */
+  .data-panel {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    overflow: hidden;
+  }
+  .data-panel-header {
+    padding: 0.75rem 1rem;
+    background: var(--surface-2);
+    border-bottom: 1px solid var(--border);
+    font-family: 'Oxanium', cursive;
+    font-size: 0.65rem;
+    font-weight: 600;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--accent);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  .data-panel-header .dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--accent);
+    animation: pulse 2s infinite;
+  }
+  @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.3; } }
+  .data-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.6rem 1rem;
+    border-bottom: 1px solid var(--border);
+    font-size: 0.78rem;
+  }
+  .data-row:last-child { border-bottom: none; }
+  .data-row .label { color: var(--text-dim); }
+  .data-row .val {
+    font-family: 'Share Tech Mono', monospace;
+    color: var(--text);
+  }
+  .data-row .val.highlight {
+    color: var(--accent);
+    font-weight: 600;
+  }
+  .data-row .status-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    display: inline-block;
+    margin-right: 0.4rem;
+  }
+  .status-dot.green { background: var(--teal); }
+  .status-dot.amber { background: #f59e0b; }
+  .status-dot.red { background: #ef4444; }
+
+  /* SECTIONS */
+  section {
+    position: relative;
+    z-index: 1;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 5rem 2rem;
+  }
+  .sec-header {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 2rem;
+    margin-bottom: 3rem;
+    flex-wrap: wrap;
+  }
+  .sec-label {
+    font-family: 'Oxanium', cursive;
+    font-size: 0.65rem;
+    font-weight: 600;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 0.5rem;
+  }
+  .sec-title {
+    font-family: 'Oxanium', cursive;
+    font-size: clamp(1.8rem, 3vw, 2.5rem);
+    font-weight: 700;
+    color: #fff;
+    line-height: 1.15;
+  }
+  .sec-aside {
+    color: var(--text-dim);
+    font-size: 0.9rem;
+    max-width: 380px;
+    text-align: right;
+  }
+  .full-divider {
+    width: 100%;
+    border: none;
+    border-top: 1px solid var(--border);
+    margin: 0;
+  }
+
+  /* MEDIA — Overlapping cards */
+  .media-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+    gap: 1.5rem;
+  }
+  .media-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+    transition: transform 0.4s cubic-bezier(0.2,0,0,1), border-color 0.3s;
+  }
+  .media-card:hover {
+    transform: translateY(-6px);
+    border-color: var(--accent);
+  }
+  .media-card .thumb {
+    aspect-ratio: 16/9;
+    background: var(--surface-2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .media-card .thumb img, .media-card .thumb video {
+    width: 100%; height: 100%; object-fit: cover;
+  }
+  .media-card .thumb .badge {
+    position: absolute;
+    top: 0.8rem;
+    left: 0.8rem;
+    font-family: 'Oxanium', cursive;
+    font-size: 0.6rem;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    padding: 0.3rem 0.65rem;
+    border-radius: 4px;
+  }
+  .badge.vid { background: var(--accent); color: #fff; }
+  .badge.img { background: var(--blue); color: #fff; }
+  .media-card .thumb .play-ring {
+    position: absolute;
+    width: 56px;
+    height: 56px;
+    border: 2px solid rgba(255,255,255,0.8);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    backdrop-filter: blur(8px);
+    background: rgba(0,0,0,0.2);
+    transition: transform 0.3s;
+    z-index: 2;
+  }
+  .media-card .thumb .play-ring:hover { transform: scale(1.1); }
+  .media-card .thumb .play-ring svg { width: 18px; fill: #fff; margin-left: 3px; }
+  .media-card .body {
+    padding: 1.25rem 1.5rem;
+  }
+  .media-card .body h3 {
+    font-family: 'Oxanium', cursive;
+    font-size: 1rem;
+    font-weight: 600;
+    color: #fff;
+    margin-bottom: 0.3rem;
+  }
+  .media-card .body p {
+    font-size: 0.82rem;
+    color: var(--text-dim);
+  }
+  .img-placeholder {
+    color: var(--text-dim);
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.7rem;
+    text-align: center;
+  }
+
+  /* IMAGE GALLERY — Tight grid with labels */
+  .img-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 1rem;
+    margin-top: 3rem;
+  }
+  .img-cell {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    overflow: hidden;
+    transition: border-color 0.3s;
+    cursor: pointer;
+  }
+  .img-cell:hover { border-color: var(--blue); }
+  .img-cell .preview {
+    aspect-ratio: 4/3;
+    background: var(--surface-2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+  }
+  .img-cell .preview img {
+    width: 100%; height: 100%; object-fit: cover;
+  }
+  .img-cell .label {
+    padding: 0.6rem 0.75rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.72rem;
+    border-top: 1px solid var(--border);
+  }
+  .img-cell .label .name { color: var(--text-dim); }
+  .img-cell .label .type {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.6rem;
+    color: var(--blue);
+    padding: 0.15rem 0.4rem;
+    background: var(--blue-dim);
+    border-radius: 3px;
+  }
+
+  /* DOWNLOAD — Panel style */
+  .dl-panel {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+  }
+  .dl-panel-header {
+    padding: 0.75rem 1.5rem;
+    background: var(--surface-2);
+    border-bottom: 1px solid var(--border);
+    font-family: 'Oxanium', cursive;
+    font-size: 0.65rem;
+    font-weight: 600;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--accent);
+  }
+  .dl-panel-body {
+    padding: 2.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 2rem;
+    flex-wrap: wrap;
+  }
+  .dl-panel-body h3 {
+    font-family: 'Oxanium', cursive;
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 0.4rem;
+  }
+  .dl-panel-body p {
+    color: var(--text-dim);
+    font-size: 0.9rem;
+  }
+  .dl-panel-body .meta {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.7rem;
+    color: var(--text-dim);
+    margin-top: 0.5rem;
+    opacity: 0.6;
+  }
+
+  /* ABOUT */
+  .about-flex {
+    display: grid;
+    grid-template-columns: 260px 1fr;
+    gap: 3rem;
+    align-items: start;
+  }
+  .about-img {
+    width: 100%;
+    aspect-ratio: 1;
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-dim);
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.7rem;
+    overflow: hidden;
+  }
+  .about-img img { width: 100%; height: 100%; object-fit: cover; }
+  .about-body h3 {
+    font-family: 'Oxanium', cursive;
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 0.15rem;
+  }
+  .about-body .sub {
+    font-family: 'Oxanium', cursive;
+    font-size: 0.75rem;
+    color: var(--accent);
+    letter-spacing: 0.08em;
+    margin-bottom: 1.25rem;
+  }
+  .about-body p {
+    color: var(--text-dim);
+    font-size: 0.92rem;
+    margin-bottom: 0.75rem;
+  }
+  .about-body .links {
+    display: flex;
+    gap: 0.75rem;
+    margin-top: 1.5rem;
+  }
+  .about-body .links a {
+    color: var(--text-dim);
+    font-family: 'Oxanium', cursive;
+    font-size: 0.78rem;
+    font-weight: 500;
+    text-decoration: none;
+    padding: 0.45rem 1rem;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    transition: all 0.3s;
+  }
+  .about-body .links a:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+
+  footer {
+    text-align: center;
+    padding: 3rem 2rem;
+    border-top: 1px solid var(--border);
+    color: var(--text-dim);
+    font-size: 0.78rem;
+    position: relative;
+    z-index: 1;
+  }
+
+  @media (max-width: 900px) {
+    nav ul { display: none; }
+    .hero { flex-direction: column; }
+    .hero-right { flex: auto; margin-left: 0; margin-top: 2.5rem; width: 100%; max-width: 400px; }
+    .about-flex { grid-template-columns: 1fr; }
+    .about-img { max-width: 200px; }
+    .dl-panel-body { flex-direction: column; text-align: center; }
+    .sec-header { flex-direction: column; align-items: flex-start; }
+    .sec-aside { text-align: left; }
+    .media-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-inner">
+    <div class="logo-area">
+      <div class="logo-mark"></div>
+      <div class="logo-text">GIVING CLAUDE HANDS <span>/ 2026</span></div>
+    </div>
+    <ul>
+      <li><a href="#overview">Overview</a></li>
+      <li><a href="#media">Media</a></li>
+      <li><a href="#report">Report</a></li>
+      <li><a href="#about">About</a></li>
+    </ul>
+  </div>
+</nav>
+
+<!-- HERO -->
+<header class="hero">
+  <div class="hero-left">
+    <div class="mission-tag">Syracuse University — Research Project</div>
+    <h1>GIVING<br>CLAUDE<br><span class="thin">HANDS</span></h1>
+    <p>Enabling an AI language model to autonomously generate 3D CAD parts in SolidWorks through a Local MCP Server — from parametric L-brackets to NACA 2412 airfoils.</p>
+    <div class="hero-actions">
+      <a href="#report" class="btn-primary">
+        <svg viewBox="0 0 24 24"><path d="M12 16l-5-5h3V4h4v7h3l-5 5zm-7 4h14v-2H5v2z"/></svg>
+        Download Report
+      </a>
+      <a href="#media" class="btn-outline">View Media →</a>
+    </div>
+  </div>
+
+  <div class="hero-right">
+    <div class="data-panel">
+      <div class="data-panel-header"><div class="dot"></div> System Status</div>
+      <div class="data-row"><span class="label">Researcher</span><span class="val">Lucas J. Fawcett</span></div>
+      <div class="data-row"><span class="label">Institution</span><span class="val">Syracuse University</span></div>
+      <div class="data-row"><span class="label">Target</span><span class="val">SolidWorks 2024 SP5</span></div>
+      <div class="data-row"><span class="label">Best Method</span><span class="val highlight">Local MCP Server</span></div>
+      <div class="data-row"><span class="label">Tools Confirmed</span><span class="val highlight">22 / 26</span></div>
+      <div class="data-row"><span class="label">VBA Macro</span><span class="val"><span class="status-dot red"></span>3/8</span></div>
+      <div class="data-row"><span class="label">Python + COM</span><span class="val"><span class="status-dot amber"></span>5/8</span></div>
+      <div class="data-row"><span class="label">MCP Server</span><span class="val"><span class="status-dot green"></span>6/8</span></div>
+    </div>
+  </div>
+</header>
+
+<hr class="full-divider">
+
+<!-- OVERVIEW -->
+<section id="overview">
+  <div class="sec-header">
+    <div>
+      <div class="sec-label">01 — Overview</div>
+      <div class="sec-title">Project Summary</div>
+    </div>
+    <div class="sec-aside">Three integration methods were evaluated for AI-driven CAD. The MCP Server's iterative feedback loop proved decisive.</div>
+  </div>
+
+  <div class="data-panel">
+    <div class="data-panel-header">Build Results — Trained System</div>
+    <div class="data-row"><span class="label">Bowl (Shell + Chamfer Test)</span><span class="val"><span class="status-dot green"></span>2 features</span></div>
+    <div class="data-row"><span class="label">Frame Cube Sculpture</span><span class="val"><span class="status-dot green"></span>5 features, 3.87 kg</span></div>
+    <div class="data-row"><span class="label">Geometric Chalice</span><span class="val"><span class="status-dot green"></span>9 features, 3.56 kg</span></div>
+    <div class="data-row"><span class="label">Cessna 172 Scale Model</span><span class="val"><span class="status-dot green"></span>27 features, 0.467 kg</span></div>
+    <div class="data-row"><span class="label">NACA 2412 — Polygon</span><span class="val"><span class="status-dot amber"></span>faceted profile</span></div>
+    <div class="data-row"><span class="label">NACA 2412 — Spline</span><span class="val"><span class="status-dot green"></span>smooth profile</span></div>
+  </div>
+</section>
+
+<hr class="full-divider">
+
+<!-- MEDIA -->
+<section id="media">
+  <div class="sec-header">
+    <div>
+      <div class="sec-label">02 — Media</div>
+      <div class="sec-title">Videos & Gallery</div>
+    </div>
+    <div class="sec-aside">Watch the MCP server build parts in real-time and browse every model Claude generated.</div>
+  </div>
+
+  <div class="media-grid">
+    <div class="media-card">
+      <div class="thumb">
+        <span class="badge vid">Video</span>
+        <div class="img-placeholder">VIDEO 1<br>Replace with your video</div>
+        <div class="play-ring"><svg viewBox="0 0 24 24"><polygon points="8,5 19,12 8,19"/></svg></div>
+      </div>
+      <div class="body">
+        <h3>MCP Server — L-Bracket</h3>
+        <p>The base test part generated through iterative tool calls.</p>
+      </div>
+    </div>
+    <div class="media-card">
+      <div class="thumb">
+        <span class="badge vid">Video</span>
+        <div class="img-placeholder">VIDEO 2<br>Replace with your video</div>
+        <div class="play-ring"><svg viewBox="0 0 24 24"><polygon points="8,5 19,12 8,19"/></svg></div>
+      </div>
+      <div class="body">
+        <h3>Cessna 172 — 27 Features</h3>
+        <p>Scale model aircraft from a single natural-language prompt.</p>
+      </div>
+    </div>
+    <div class="media-card">
+      <div class="thumb">
+        <span class="badge vid">Video</span>
+        <div class="img-placeholder">VIDEO 3<br>Replace with your video</div>
+        <div class="play-ring"><svg viewBox="0 0 24 24"><polygon points="8,5 19,12 8,19"/></svg></div>
+      </div>
+      <div class="body">
+        <h3>NACA 2412 — Spline Airfoil</h3>
+        <p>Smooth B-spline curve with 60 fit-points, extruded 150 mm.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="img-grid">
+    <div class="img-cell">
+      <div class="preview"><div class="img-placeholder">IMAGE 1</div></div>
+      <div class="label"><span class="name">VBA L-Bracket</span><span class="type">.PNG</span></div>
+    </div>
+    <div class="img-cell">
+      <div class="preview"><div class="img-placeholder">IMAGE 2</div></div>
+      <div class="label"><span class="name">Python L-Bracket</span><span class="type">.PNG</span></div>
+    </div>
+    <div class="img-cell">
+      <div class="preview"><div class="img-placeholder">IMAGE 3</div></div>
+      <div class="label"><span class="name">MCP L-Bracket</span><span class="type">.PNG</span></div>
+    </div>
+    <div class="img-cell">
+      <div class="preview"><div class="img-placeholder">IMAGE 4</div></div>
+      <div class="label"><span class="name">Frame Cube</span><span class="type">.PNG</span></div>
+    </div>
+    <div class="img-cell">
+      <div class="preview"><div class="img-placeholder">IMAGE 5</div></div>
+      <div class="label"><span class="name">Chalice</span><span class="type">.PNG</span></div>
+    </div>
+    <div class="img-cell">
+      <div class="preview"><div class="img-placeholder">IMAGE 6</div></div>
+      <div class="label"><span class="name">Cessna 172</span><span class="type">.PNG</span></div>
+    </div>
+    <div class="img-cell">
+      <div class="preview"><div class="img-placeholder">IMAGE 7</div></div>
+      <div class="label"><span class="name">NACA Polygon</span><span class="type">.PNG</span></div>
+    </div>
+    <div class="img-cell">
+      <div class="preview"><div class="img-placeholder">IMAGE 8</div></div>
+      <div class="label"><span class="name">NACA Spline</span><span class="type">.PNG</span></div>
+    </div>
+  </div>
+</section>
+
+<hr class="full-divider">
+
+<!-- REPORT -->
+<section id="report">
+  <div class="sec-header">
+    <div>
+      <div class="sec-label">03 — Report</div>
+      <div class="sec-title">Full Research Paper</div>
+    </div>
+  </div>
+
+  <div class="dl-panel">
+    <div class="dl-panel-header">Download — Research Paper</div>
+    <div class="dl-panel-body">
+      <div>
+        <h3>Giving Claude Hands</h3>
+        <p>Complete methodology, results, engineering drawings, and code appendices.</p>
+        <div class="meta">PDF · ~60 pages · Lucas J. Fawcett · Syracuse University · April 2026</div>
+      </div>
+      <a href="Giving_Claude_Hands_Report.pdf" class="btn-primary" download>
+        <svg viewBox="0 0 24 24"><path d="M12 16l-5-5h3V4h4v7h3l-5 5zm-7 4h14v-2H5v2z"/></svg>
+        Download PDF
+      </a>
+    </div>
+  </div>
+</section>
+
+<hr class="full-divider">
+
+<!-- ABOUT -->
+<section id="about">
+  <div class="sec-header">
+    <div>
+      <div class="sec-label">04 — About</div>
+      <div class="sec-title">The Researcher</div>
+    </div>
+  </div>
+
+  <div class="about-flex">
+    <div class="about-img">
+      <!-- Replace: <img src="your-photo.jpg" alt="Lucas Fawcett"> -->
+      Your Photo
+    </div>
+    <div class="about-body">
+      <h3>Lucas J. Fawcett</h3>
+      <div class="sub">Syracuse University</div>
+      <p><!-- EDIT --> I'm a student at Syracuse University researching the intersection of AI and engineering workflows. "Giving Claude Hands" investigates whether an AI language model can operate professional CAD software autonomously when given appropriate tooling and iterative feedback.</p>
+      <p><!-- EDIT --> My interests include CAD/CAM automation, AI-assisted design, additive manufacturing, and aerospace engineering. This project demonstrates that with the right architecture, an AI can build real 3D geometry from natural language alone.</p>
+      <div class="links">
+        <a href="#">LinkedIn</a>
+        <a href="#">GitHub</a>
+        <a href="mailto:your-email@syr.edu">Email</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  © 2026 Lucas J. Fawcett — Syracuse University — Giving Claude Hands
+</footer>
+
+</body>
+</html>
